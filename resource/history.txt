@@ -1,0 +1,19 @@
+v1.2 [2015.06.10]
+- added support for Flash 18
+- added "Get player..." button which allows to download any Standalone Player version
+- version information block moved to the bottom and now displays more detailed output
+- code cleanup, removed PNG routines from miniz
+
+v1.1 [2015.04.26]
+- added support for LZMA-compressed Flash files (only "Keep unchanged" mode)
+- improved Flash and Standalone Player version comparsion
+- required Standalone Flash Player version can be downloaded from application
+- replaced zlib with miniz: reduced program size and added progress bar in cost of
+  a bit worse compression (but still better than default one from Adobe)
+- fixed manifest resource id (fixes window styles)
+- fixed commandline routine
+- set active link to the site
+- source codes released to public
+
+v1.0 [2014.05.27]
+- first publice release

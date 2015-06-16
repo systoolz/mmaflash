@@ -1,0 +1,4 @@
+1. download and unpack "miniz" source files here from
+http://code.google.com/p/miniz/
+
+2. apply "miniz.diff" to "miniz.c" to avoid linking of unused code
