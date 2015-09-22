@@ -57,6 +57,7 @@ char *ptr;
 {27, 16, 0}
 {28, 17, 0}
 {29, 18, 0}
+{30, 19, 0}
 */
 
 #define MAKEVERS(x,y) MAKELONG((y),(x))
@@ -88,12 +89,12 @@ DWORD result;
     result = MAKEVERS(11, dwFlash - 13);
   }
   // third block
-  if ((dwFlash >= 23) && (dwFlash <= 29)) {
+  if ((dwFlash >= 23) && (dwFlash <= 30)) {
     result = MAKEVERS(dwFlash - 11, 0);
   }
   // avoid conflicts with possible future versions
-  if (dwFlash >= 30) {
-    result = MAKEVERS(18, 0);
+  if (dwFlash >= 31) {
+    result = MAKEVERS(19, 0);
   }
   return(result);
 }

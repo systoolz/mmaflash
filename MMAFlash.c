@@ -78,7 +78,7 @@ TCHAR buf[1025], *s;
 
 // v1.1
 #define DEF_MIN_VER 10
-#define DEF_MAX_VER 18
+#define DEF_MAX_VER 19
 void DownloadPlayerFile(HWND wnd, DWORD dwRequired) {
 TCHAR buf[1025], *s;
 HMENU hm;

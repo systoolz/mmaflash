@@ -1,3 +1,7 @@
+v1.3 [2015.09.22]
+- added support for Flash 19
+- source codes now available through GitHub repository: https://github.com/systoolz/mmaflash
+
 v1.2 [2015.06.10]
 - added support for Flash 18
 - added "Get player..." button which allows to download any Standalone Player version
