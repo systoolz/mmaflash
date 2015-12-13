@@ -9,56 +9,51 @@
 #include "FlashKit.h"
 
 TCHAR *OpenSaveDialogEx(HWND wnd, DWORD msk, int savedlg) {
-TCHAR *result, *buf, *s;
+TCHAR buf[128], *result, *s;
   result = NULL;
-  buf = STR_ALLOC(128);
-  if (buf) {
-    buf[0] = 0;
-    // flash movie
-    if (msk & 1) {
-      s = LangLoadString(IDS_MSK_SWF);
+  buf[0] = 0;
+  // flash movie
+  if (msk & 1) {
+    s = LangLoadString(IDS_MSK_SWF);
+    if (s) {
       lstrcpy(&buf[lstrlen(buf)], s);
       FreeMem(s);
     }
-    // projector
-    if (msk & 2) {
-      s = LangLoadString(IDS_MSK_EXE);
+  }
+  // projector
+  if (msk & 2) {
+    s = LangLoadString(IDS_MSK_EXE);
+    if (s) {
       lstrcpy(&buf[lstrlen(buf)], s);
       FreeMem(s);
     }
-    // all files mask must be always present
-    s = LangLoadString(IDS_MSK_ALL);
+  }
+  // all files mask must be always present
+  s = LangLoadString(IDS_MSK_ALL);
+  if (s) {
     lstrcpy(&buf[lstrlen(buf)], s);
     FreeMem(s);
-    for (s = buf; *s; s++) {
-      if (*s == TEXT('|')) {
-        *s = 0;
-      }
-    }
-    // get default extension
-    for (s = buf; *s; s++);
-    for (s++; *s; s++);
-    for (s--; *s; s--) {
-      if (*s == TEXT('.')) {
-        break;
-      }
-      if ((*s == TEXT('*')) || (*s == TEXT('?'))) {
-        s = NULL;
-        break;
-      }
-    }
-    if (s) { s++; }
-    result = OpenSaveDialog(wnd, buf, s, savedlg);
-    FreeMem(buf);
   }
+  for (s = buf; *s; s++) {
+    if (*s == TEXT('|')) {
+       *s = 0;
+    }
+  }
+  // get default extension
+  for (s = buf; *s; s++);
+  for (s++; *s; s++);
+  for (s--; *s; s--) {
+    if (*s == TEXT('.')) {
+      break;
+    }
+    if ((*s == TEXT('*')) || (*s == TEXT('?'))) {
+      s = NULL;
+      break;
+    }
+  }
+  if (s) { s++; }
+  result = OpenSaveDialog(wnd, buf, s, savedlg);
   return(result);
-}
-
-// v1.1
-void URLOpenLink(HWND wnd, TCHAR *s) {
-  CoInitialize(NULL);
-  ShellExecute(wnd, NULL, s, NULL, NULL, SW_SHOWNORMAL);
-  CoUninitialize();
 }
 
 // v1.1
@@ -77,8 +72,6 @@ TCHAR buf[1025], *s;
 }
 
 // v1.1
-#define DEF_MIN_VER 10
-#define DEF_MAX_VER 19
 void DownloadPlayerFile(HWND wnd, DWORD dwRequired) {
 TCHAR buf[1025], *s;
 HMENU hm;
@@ -87,7 +80,7 @@ RECT rc;
   // there are no Player version lower than 10
   // available on the direct link at Adobe site
   if (dwRequired) {
-    dwRequired = max(HIWORD(dwRequired), DEF_MIN_VER);
+    dwRequired = max(HIWORD(dwRequired), FK_SA_MIN_VER);
   }
   // create popup menu
   hm = CreatePopupMenu();
@@ -103,7 +96,7 @@ RECT rc;
     // add items
     s = LangLoadString(IDS_FMT_PLAYERNAME);
     if (s) {
-      for (i = DEF_MAX_VER; i >= DEF_MIN_VER; i--) {
+      for (i = FK_SA_MAX_VER; i >= FK_SA_MIN_VER; i--) {
         wsprintf(buf, s, i);
         // also highlight minimum required player version
         AppendMenu(hm, MF_STRING | ((i == dwRequired) ? MF_CHECKED : 0), 100 + i, buf);
@@ -138,62 +131,6 @@ RECT rc;
       }
     }
   }
-}
-
-int MsgBox(HWND wnd, TCHAR *lpText, UINT uType) {
-int result;
-TCHAR *s, *t;
-  s = NULL;
-  if (!HIWORD(lpText)) {
-    s = LangLoadString(LOWORD(lpText));
-  }
-  t = GetWndText(wnd);
-  result = MessageBox(wnd, s ? s : lpText, t, uType);
-  if (t) { FreeMem(t); }
-  if (s) { FreeMem(s); }
-  return(result);
-}
-
-// http://blogs.msdn.com/b/oldnewthing/archive/2004/08/04/208005.aspx
-void DialogEnableWindow(HWND hdlg, int idControl, BOOL bEnable) {
-HWND hctl;
-  hctl = GetDlgItem(hdlg, idControl);
-  if ((bEnable == FALSE) && (hctl == GetFocus())) {
-    SendMessage(hdlg, WM_NEXTDLGCTL, 0, FALSE);
-  }
-  EnableWindow(hctl, bEnable);
-}
-
-DWORD GetFileVersionMS(TCHAR *filename) {
-DWORD result;
-HINSTANCE hl;
-HGLOBAL hg;
-HRSRC hr;
-BYTE *data;
-  result = 0;
-  hl = LoadLibraryEx(filename, 0, LOAD_LIBRARY_AS_DATAFILE);
-  if (hl) {
-    // http://stackoverflow.com/questions/13941837/how-to-get-version-info-from-resources
-    hr = FindResource(hl, MAKEINTRESOURCE(1), RT_VERSION);
-    if (hr) {
-      hg = LoadResource(hl, hr);
-      if (hg) {
-        data = (BYTE *) LockResource(hg);
-        // http://www.csn.ul.ie/~caolan/publink/winresdump/winresdump/doc/resfmt.txt
-        if (data) {
-          result = MEM_MOVE(data, WORD);
-          // "Each block of information is dword aligned." (c) link above
-          while ((result > sizeof(VS_FIXEDFILEINFO)) && (MEM_MOVE(data, DWORD) != VS_FFI_SIGNATURE)) {
-            result -= sizeof(DWORD);
-            data   += sizeof(DWORD);
-          }
-          result = ((VS_FIXEDFILEINFO *) data)->dwFileVersionMS;
-        } // data
-      } // hg
-    } // hr
-    FreeLibrary(hl);
-  } // hl
-  return(result);
 }
 
 void UpdateFlashVersion(HWND wnd) {

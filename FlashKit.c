@@ -22,9 +22,10 @@
 
 // FIXME: miniz stubs
 void *memset(void *s, int c, size_t n) {
-char *ptr;
-  for (ptr = s; n > 0; n--) {
-    *(ptr++) = (char) c;
+char *p;
+  p = s;
+  while (n--) {
+    *(p++) = (char) c;
   }
   return(s);
 }
@@ -58,6 +59,7 @@ char *ptr;
 {28, 17, 0}
 {29, 18, 0}
 {30, 19, 0}
+{31, 20, 0}
 */
 
 #define MAKEVERS(x,y) MAKELONG((y),(x))
@@ -89,12 +91,12 @@ DWORD result;
     result = MAKEVERS(11, dwFlash - 13);
   }
   // third block
-  if ((dwFlash >= 23) && (dwFlash <= 30)) {
+  if ((dwFlash >= 23) && (dwFlash <= 31)) {
     result = MAKEVERS(dwFlash - 11, 0);
   }
   // avoid conflicts with possible future versions
-  if (dwFlash >= 31) {
-    result = MAKEVERS(19, 0);
+  if (dwFlash >= 32) {
+    result = MAKEVERS(20, 0);
   }
   return(result);
 }

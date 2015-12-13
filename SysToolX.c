@@ -203,3 +203,66 @@ OPENFILENAME ofn;
   FreeMem(ofn.lpstrFile);
   return(NULL);
 }
+
+// v1.1
+void URLOpenLink(HWND wnd, TCHAR *s) {
+  CoInitialize(NULL);
+  ShellExecute(wnd, NULL, s, NULL, NULL, SW_SHOWNORMAL);
+  CoUninitialize();
+}
+
+int MsgBox(HWND wnd, TCHAR *lpText, UINT uType) {
+int result;
+TCHAR *s, *t;
+  s = NULL;
+  if (!HIWORD(lpText)) {
+    s = LangLoadString(LOWORD(lpText));
+  }
+  t = GetWndText(wnd);
+  result = MessageBox(wnd, s ? s : lpText, t, uType);
+  if (t) { FreeMem(t); }
+  if (s) { FreeMem(s); }
+  return(result);
+}
+
+// http://blogs.msdn.com/b/oldnewthing/archive/2004/08/04/208005.aspx
+void DialogEnableWindow(HWND hdlg, int idControl, BOOL bEnable) {
+HWND hctl;
+  hctl = GetDlgItem(hdlg, idControl);
+  if ((bEnable == FALSE) && (hctl == GetFocus())) {
+    SendMessage(hdlg, WM_NEXTDLGCTL, 0, FALSE);
+  }
+  EnableWindow(hctl, bEnable);
+}
+
+DWORD GetFileVersionMS(TCHAR *filename) {
+DWORD result;
+HINSTANCE hl;
+HGLOBAL hg;
+HRSRC hr;
+BYTE *data;
+  result = 0;
+  hl = LoadLibraryEx(filename, 0, LOAD_LIBRARY_AS_DATAFILE);
+  if (hl) {
+    // http://stackoverflow.com/questions/13941837/how-to-get-version-info-from-resources
+    hr = FindResource(hl, MAKEINTRESOURCE(1), RT_VERSION);
+    if (hr) {
+      hg = LoadResource(hl, hr);
+      if (hg) {
+        data = (BYTE *) LockResource(hg);
+        // http://www.csn.ul.ie/~caolan/publink/winresdump/winresdump/doc/resfmt.txt
+        if (data) {
+          result = MEM_MOVE(data, WORD);
+          // "Each block of information is dword aligned." (c) link above
+          while ((result > sizeof(VS_FIXEDFILEINFO)) && (MEM_MOVE(data, DWORD) != VS_FFI_SIGNATURE)) {
+            result -= sizeof(DWORD);
+            data   += sizeof(DWORD);
+          }
+          result = ((VS_FIXEDFILEINFO *) data)->dwFileVersionMS;
+        } // data
+      } // hg
+    } // hr
+    FreeLibrary(hl);
+  } // hl
+  return(result);
+}

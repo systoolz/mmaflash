@@ -24,4 +24,11 @@ TCHAR *GetWndText(HWND wnd);
 
 TCHAR *OpenSaveDialog(HWND wnd, TCHAR *filemask, TCHAR *defext, int savedlg);
 
+// v1.1
+void URLOpenLink(HWND wnd, TCHAR *s);
+
+int MsgBox(HWND wnd, TCHAR *lpText, UINT uType);
+void DialogEnableWindow(HWND hdlg, int idControl, BOOL bEnable);
+DWORD GetFileVersionMS(TCHAR *filename);
+
 #endif
