@@ -1,3 +1,15 @@
+v1.5 [2016.03.13]
+This version changes aimed to make it more flexible to any possible future Flash releases.
+- added support for Flash 21 and any other possible future versions if Adobe didn't
+  change version increment method
+- latest available Standalone Player version will be detected on the first usage of
+  "Get player..." button per program run through official Adobe version check URL,
+  but in case of any network errors version 21 will be used as the latest
+- "Compress" option renamed to "(Re)Compress" because that's what it actually do -
+  compress uncompressed Flash file or recompress already compressed Flash file
+  (i.e. uncompress and compress it back again)
+- minor code cleanup
+
 v1.4 [2015.12.10]
 - added support for Flash 20
 - minor code cleanup

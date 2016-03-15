@@ -71,6 +71,53 @@ TCHAR buf[1025], *s;
   return(s);
 }
 
+// v1.5
+// http://www.adobe.com/devnet/flashplayer/articles/flash_player_admin_guide.html
+static DWORD vmax = 0;
+DWORD GetLatestFlashVersion(void) {
+DWORD i, l, vcur;
+TCHAR *s;
+BYTE *b;
+  // find latest version available
+  if (!vmax) {
+    vmax = FK_SA_MAX_VER;
+    s = LangLoadString(IDS_FMT_VERSIONCHK);
+    if (s) {
+      // warning: this is ANSI text, not TEXT()
+      /*
+        <version>
+        <Player major="21" majorBeta="21"/>
+        </version>
+      */
+      b = HTTPGetContent(s, &l);
+      if (b) {
+        for (i = 0; i < l; i++) {
+          if (b[i] == '"') {
+            i++;
+            break;
+          }
+        }
+        // just in case
+        while ((i < l) && ((b[i] == ' ') || (b[i] == '\t'))) { i++; }
+        // number found
+        if (i < l) {
+          vcur = 0;
+          while ((i < l) && (b[i] >= '0') && (b[i] <= '9')) {
+            vcur *= 10;
+            vcur += (b[i] - '0');
+            i++;
+          }
+          // set the maximum version
+          vmax = max(vcur, vmax);
+        }
+        FreeMem(b);
+      }
+      FreeMem(s);
+    }
+  }
+  return(vmax);
+}
+
 // v1.1
 void DownloadPlayerFile(HWND wnd, DWORD dwRequired) {
 TCHAR buf[1025], *s;
@@ -96,7 +143,7 @@ RECT rc;
     // add items
     s = LangLoadString(IDS_FMT_PLAYERNAME);
     if (s) {
-      for (i = FK_SA_MAX_VER; i >= FK_SA_MIN_VER; i--) {
+      for (i = GetLatestFlashVersion(); i >= FK_SA_MIN_VER; i--) {
         wsprintf(buf, s, i);
         // also highlight minimum required player version
         AppendMenu(hm, MF_STRING | ((i == dwRequired) ? MF_CHECKED : 0), 100 + i, buf);

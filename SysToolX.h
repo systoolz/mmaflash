@@ -1,19 +1,13 @@
 #ifndef __SYSTOOLX_H
 #define __SYSTOOLX_H
 
-#if __GNUC__ == 3
-#define memcpy __builtin_memcpy
-#define memmove memcpy
-#define memset __builtin_memset
-#endif
-
 #define MEM_MOVE(x, y) ((y *)x)[0]
 #define STR_SIZE(x) (lstrlen(x) + 1) * sizeof(TCHAR)
 #define STR_ALLOC(x) (TCHAR *) GetMem((x + 1) * sizeof(TCHAR))
 
-void *GrowMem(void *lpPtr, DWORD dwSize);
+void FreeMem(void *block);
 void *GetMem(DWORD dwSize);
-BOOL FreeMem(void *lpPtr);
+void *GrowMem(void *block, DWORD dwSize);
 
 TCHAR *LangLoadString(UINT sid);
 
@@ -30,5 +24,8 @@ void URLOpenLink(HWND wnd, TCHAR *s);
 int MsgBox(HWND wnd, TCHAR *lpText, UINT uType);
 void DialogEnableWindow(HWND hdlg, int idControl, BOOL bEnable);
 DWORD GetFileVersionMS(TCHAR *filename);
+
+// v1.5
+BYTE *HTTPGetContent(TCHAR *url, DWORD *len);
 
 #endif

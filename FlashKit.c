@@ -34,6 +34,7 @@ char *p;
 
 /*
 // older version
+...
 { 9,  9, 0}
 {10, 10, 0}
 // first block
@@ -53,13 +54,7 @@ char *p;
 // third block
 {23, 12, 0}
 {24, 13, 0}
-{25, 14, 0}
-{26, 15, 0}
-{27, 16, 0}
-{28, 17, 0}
-{29, 18, 0}
-{30, 19, 0}
-{31, 20, 0}
+...
 */
 
 #define MAKEVERS(x,y) MAKELONG((y),(x))
@@ -91,12 +86,10 @@ DWORD result;
     result = MAKEVERS(11, dwFlash - 13);
   }
   // third block
-  if ((dwFlash >= 23) && (dwFlash <= 31)) {
+  // should work for any future versions
+  // if Adobe didn't change version increment method
+  if (dwFlash >= 23) {
     result = MAKEVERS(dwFlash - 11, 0);
-  }
-  // avoid conflicts with possible future versions
-  if (dwFlash >= 32) {
-    result = MAKEVERS(20, 0);
   }
   return(result);
 }
@@ -175,7 +168,7 @@ MZCBDATA *cd;
     UpdateWindow(GetParent(cd->wnd));
   }
   // move data block to output buffer
-  MoveMemory(cd->outbuf, pBuf, len);
+  CopyMemory(cd->outbuf, pBuf, len);
   // move output buffer pointer
   cd->outbuf += len;
   // prevent buffer overflow

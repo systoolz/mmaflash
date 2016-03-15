@@ -5,7 +5,7 @@
 // min and max standalone flash player version
 // available for download at the Adobe site
 #define FK_SA_MIN_VER 10
-#define FK_SA_MAX_VER 20
+#define FK_SA_MAX_VER 21
 
 // "FWS" (none compression)
 #define FK_SIGN_FWS 0x00535746
