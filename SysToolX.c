@@ -170,8 +170,10 @@ TCHAR *result, *np;
 int sz;
   sz = GetFullPathName(filename, 0, NULL, &np);
   result = STR_ALLOC(sz);
-  GetFullPathName(filename, sz + 1, result, &np);
-  result[sz] = 0;
+  if (result) {
+    GetFullPathName(filename, sz + 1, result, &np);
+    result[sz] = 0;
+  }
   return(result);
 }
 
@@ -180,39 +182,33 @@ TCHAR *result;
 int sz;
   sz = GetWindowTextLength(wnd);
   result = STR_ALLOC(sz);
-  GetWindowText(wnd, result, sz + 1);
-  result[sz] = 0;
+  if (result) {
+    GetWindowText(wnd, result, sz + 1);
+    result[sz] = 0;
+  }
   return(result);
 }
 
 TCHAR *OpenSaveDialog(HWND wnd, TCHAR *filemask, TCHAR *defext, int savedlg) {
 OPENFILENAME ofn;
+TCHAR filename[MAX_PATH], *result;
+  result = NULL;
+  filename[0] = 0;
   ZeroMemory(&ofn, sizeof(ofn));
-  ofn.lStructSize     = sizeof(ofn);
-  ofn.hwndOwner       = wnd;
-  ofn.nMaxFile        = MAX_PATH;
-  ofn.lpstrFile       = STR_ALLOC(ofn.nMaxFile);
-  ofn.Flags           = OFN_HIDEREADONLY | OFN_PATHMUSTEXIST | OFN_OVERWRITEPROMPT; // | OFN_EXPLORER | OFN_FILEMUSTEXIST | OFN_NOCHANGEDIR
-/// OFN_ALLOWMULTISELECT
-// http://stackoverflow.com/questions/656655/getopenfilename-with-ofn-allowmultiselect-flag-set
-// http://support.microsoft.com/kb/131462
-  ofn.lpstrFilter     = filemask;
-  ofn.lpstrDefExt     = defext;
-  if (savedlg) {
-    if (GetSaveFileName(&ofn)) {
-      ofn.lpstrFileTitle = GetFullFilePath(ofn.lpstrFile);
-      FreeMem(ofn.lpstrFile);
-      return(ofn.lpstrFileTitle);
-    }
-  } else {
-    if (GetOpenFileName(&ofn)) {
-      ofn.lpstrFileTitle = GetFullFilePath(ofn.lpstrFile);
-      FreeMem(ofn.lpstrFile);
-      return(ofn.lpstrFileTitle);
-    }
+  ofn.lStructSize = sizeof(ofn);
+  ofn.hwndOwner   = wnd;
+  ofn.nMaxFile    = MAX_PATH;
+  ofn.lpstrFile   = filename;
+  ofn.Flags       = OFN_HIDEREADONLY | OFN_PATHMUSTEXIST | OFN_OVERWRITEPROMPT; // | OFN_EXPLORER | OFN_FILEMUSTEXIST | OFN_NOCHANGEDIR
+  /// OFN_ALLOWMULTISELECT
+  // http://stackoverflow.com/questions/656655/getopenfilename-with-ofn-allowmultiselect-flag-set
+  // http://support.microsoft.com/kb/131462
+  ofn.lpstrFilter = filemask;
+  ofn.lpstrDefExt = defext;
+  if ((savedlg ? GetSaveFileName : GetOpenFileName)(&ofn)) {
+    result = GetFullFilePath(ofn.lpstrFile);
   }
-  FreeMem(ofn.lpstrFile);
-  return(NULL);
+  return(result);
 }
 
 // v1.1
