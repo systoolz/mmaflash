@@ -242,6 +242,20 @@ HWND hctl;
   EnableWindow(hctl, bEnable);
 }
 
+// PATCH: Windows 98 combobox fix (common controls version < 6)
+// http://blogs.msdn.com/b/oldnewthing/archive/2006/03/10/548537.aspx
+// ! http://vbnet.mvps.org/index.html?code/comboapi/comboheight.htm
+void AdjustComboBoxHeight(HWND hWndCmbBox, DWORD MaxVisItems) {
+RECT rc;
+  GetWindowRect(hWndCmbBox, &rc);
+  rc.right -= rc.left;
+  ScreenToClient(GetParent(hWndCmbBox), (POINT *) &rc);
+  rc.bottom = (MaxVisItems + 2) * SendMessage(hWndCmbBox, CB_GETITEMHEIGHT, 0, 0);
+  MoveWindow(hWndCmbBox, rc.left, rc.top, rc.right, rc.bottom, TRUE);
+  // PATCH: enable integral height, ComboBox must be created with CBS_NOINTEGRALHEIGHT
+  SetWindowLong(hWndCmbBox, GWL_STYLE, (GetWindowLong(hWndCmbBox, GWL_STYLE) | CBS_NOINTEGRALHEIGHT) ^ CBS_NOINTEGRALHEIGHT);
+}
+
 DWORD GetFileVersionMS(TCHAR *filename) {
 DWORD result;
 HINSTANCE hl;
@@ -307,13 +321,11 @@ DWORD sz;
       if (hConn) {
         // request
         sz = (uc.nScheme == INTERNET_SCHEME_HTTPS) ? (INTERNET_FLAG_SECURE | INTERNET_FLAG_IGNORE_CERT_CN_INVALID | INTERNET_FLAG_IGNORE_CERT_DATE_INVALID) : 0;
-        hReq = HttpOpenRequest(hConn, NULL, uc.lpszUrlPath, TEXT("1.0"), NULL, NULL,
+        hReq = HttpOpenRequest(hConn, NULL, uc.lpszUrlPath, HTTP_VERSION, NULL, NULL, // v1.7
           /* INTERNET_FLAG_NO_AUTO_REDIRECT |*/ INTERNET_FLAG_NO_UI | INTERNET_FLAG_NO_COOKIES |
           INTERNET_FLAG_NO_CACHE_WRITE | sz, 0);
         if (hReq) {
-          sz = HttpSendRequest(hReq, TEXT(
-            "Connection: Close"
-          ), (DWORD) -1, NULL, 0);
+          sz = HttpSendRequest(hReq, TEXT("Connection: Close"), (DWORD) -1, NULL, 0);
           if (sz) {
             buf = GetMem(MAX_BLOCK_SIZE);
             do {

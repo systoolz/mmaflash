@@ -23,6 +23,7 @@ void URLOpenLink(HWND wnd, TCHAR *s);
 
 int MsgBox(HWND wnd, TCHAR *lpText, UINT uType);
 void DialogEnableWindow(HWND hdlg, int idControl, BOOL bEnable);
+void AdjustComboBoxHeight(HWND hWndCmbBox, DWORD MaxVisItems); // v1.7
 DWORD GetFileVersionMS(TCHAR *filename);
 
 // v1.5

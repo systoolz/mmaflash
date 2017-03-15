@@ -1,3 +1,8 @@
+v1.7 [2017.03.15]
+- added support for Flash 25
+- fixed invalid HTTP request for latest available Standalone Player version detection
+- popup menu for the list of available Standalone Players replaced with the combo box
+
 v1.6 [2016.12.21]
 - added support for Flash 24
 - fixed version information block window styles (borders was invisible under Windows 98)

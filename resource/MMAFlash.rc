@@ -13,8 +13,8 @@ IDI_ICN ICON "MMAFlash.ico"
 1 24 "Manifest.xml"
 
 1 VERSIONINFO
-FILEVERSION 1,6,0,0
-PRODUCTVERSION 1,6,0,0
+FILEVERSION 1,7,0,0
+PRODUCTVERSION 1,7,0,0
 FILETYPE 1
 BEGIN
   BLOCK "StringFileInfo"
@@ -23,12 +23,12 @@ BEGIN
     BEGIN
       VALUE "CompanyName", "SysTools"
       VALUE "FileDescription", "Macromedia/Adobe Flash Tool"
-      VALUE "FileVersion", "1.6.0.0"
-      VALUE "LegalCopyright", "\xA9 SysTools 2014-2016"
+      VALUE "FileVersion", "1.7"
+      VALUE "LegalCopyright", "\xA9 SysTools 2014-2017"
       VALUE "OriginalFilename", "mmaflash.exe"
       VALUE "InternalName", "mmaflash"
       VALUE "ProductName", "Macromedia/Adobe Flash Tool"
-      VALUE "ProductVersion", "1.6"
+      VALUE "ProductVersion", "1.7"
     END
   END
   BLOCK "VarFileInfo"
@@ -38,14 +38,13 @@ BEGIN
 END
 
 IDD_DLG DIALOG 0, 0, 234, 150
-// STYLE DS_ABSALIGN | DS_CENTER | DS_MODALFRAME | DS_SHELLFONT | WS_CAPTION | WS_VISIBLE | WS_GROUP | WS_POPUP | WS_SYSMENU
-// EXSTYLE WS_EX_APPWINDOW
 STYLE DS_MODALFRAME | DS_CENTER | WS_POPUP | WS_CAPTION | WS_SYSMENU | WS_MINIMIZEBOX
-CAPTION "Macromedia/Adobe Flash Tool v1.6"
+CAPTION "Macromedia/Adobe Flash Tool v1.7"
 FONT 8, "Ms Shell Dlg"
 BEGIN
   PUSHBUTTON      "Open...", IDC_FLOPEN, 177, 7, 50, 14
   PUSHBUTTON      "Get player...", IDC_GETPLAY, 177, 27, 50, 14
+  COMBOBOX        IDC_PLAYERLIST, 177, 27, 50, 14, WS_TABSTOP | CBS_DROPDOWNLIST | CBS_HASSTRINGS | WS_VSCROLL | CBS_SORT | CBS_NOINTEGRALHEIGHT
   EDITTEXT        IDC_FSOURCE, 7, 7, 165, 15, ES_AUTOHSCROLL | ES_READONLY
   GROUPBOX        "Flash movie file", IDC_STATIC, 7, 22, 80, 45
   AUTORADIOBUTTON "Keep unchanged", IDC_FRADIO1, 12, 32, 71, 8, WS_GROUP
@@ -59,7 +58,7 @@ BEGIN
   EDITTEXT        IDC_FPLAYER, 97, 62, 70, 15, ES_AUTOHSCROLL | ES_READONLY
   PUSHBUTTON      "Save", IDC_FLSAVE, 177, 52, 50, 14
   PUSHBUTTON      "Exit", IDCANCEL, 177, 69, 50, 14
-  LTEXT           "(c) SysTools 2014-2016 | http://systools.losthost.org/?misc", IDC_HOMEPAGE, 22, 86, 190, 8, SS_OWNERDRAW | SS_NOTIFY
+  LTEXT           "\xA9 SysTools 2014-2017 | http://systools.losthost.org/?misc", IDC_HOMEPAGE, 22, 86, 190, 8, SS_OWNERDRAW | SS_NOTIFY
   CONTROL         "", IDC_PROGRESS, PROGRESS_CLASS, PBS_SMOOTH, 17, 86, 201, 10
   EDITTEXT        IDC_VERSION, 17, 102, 200, 40, ES_AUTOHSCROLL | ES_MULTILINE | ES_READONLY
 END
@@ -70,20 +69,18 @@ BEGIN
   IDS_MSK_EXE "Projector (*.exe)|*.exe|"
   IDS_MSK_ALL "All Files (*.*)|*.*|"
 
-  IDS_VER_FLASHMOVIE "Flash movie version: %d\r\n"
-  IDS_VER_PLAYERMREQ "Required minimum Flash Player version: %d.%d\r\n"
-  IDS_VER_PLAYERFILE "Current Flash Player version: %d.%d\r\n"
-  IDS_VER_PLAYERFROM "Add/replace Flash Player version: %d.%d"
+  IDS_VER_FLASHMOVIE "Flash movie version: %lu\r\n"
+  IDS_VER_PLAYERMREQ "Required minimum Flash Player version: %lu.%lu\r\n"
+  IDS_VER_PLAYERFILE "Current Flash Player version: %lu.%lu\r\n"
+  IDS_VER_PLAYERFROM "Add/replace Flash Player version: %lu.%lu"
 
-  IDS_FMT_PLAYERMENU "Select version to download"
-  IDS_FMT_PLAYERNAME "Flash Player %d Projector"
-  IDS_FMT_PLAYERSTOP "Cancel and close this menu"
-  IDS_FMT_PLAYERLINK "http://download.macromedia.com/pub/flashplayer/updaters/%d/flashplayer_%d_sa.exe"
+  IDS_FMT_PLAYERNAME "Player %lu"
+  IDS_FMT_PLAYERLINK "http://download.macromedia.com/pub/flashplayer/updaters/%lu/flashplayer_%lu_sa.exe"
   IDS_FMT_VERSIONCHK "http://fpdownload.macromedia.com/pub/flashplayer/update/current/sau/currentmajor.xml"
 
-  IDS_MSG_BADVERSION "Current Flash file version: %d\r\n"\
-                     "Selected Flash Player version: %d.%d\r\n"\
-                     "Required Flash Player version: %d.%d\r\n\r\n"\
+  IDS_MSG_BADVERSION "Current Flash file version: %lu\r\n"\
+                     "Selected Flash Player version: %lu.%lu\r\n"\
+                     "Required Flash Player version: %lu.%lu\r\n\r\n"\
                      "Flash Player version must be equal or higher than required to play this Flash file.\r\n"\
                      "An older Flash Player can't be merged with a newer Flash file.\r\n\r\n"\
                      "Would you like to download appropriate version of the Flash Player?"

@@ -118,66 +118,40 @@ BYTE *b;
   return(vmax);
 }
 
-// v1.1
+// v1.7
 void DownloadPlayerFile(HWND wnd, DWORD dwRequired) {
 TCHAR buf[1025], *s;
-HMENU hm;
+HWND hcb;
 DWORD i;
-RECT rc;
   // there are no Player version lower than 10
   // available on the direct link at Adobe site
-  if (dwRequired) {
-    dwRequired = max(HIWORD(dwRequired), FK_SA_MIN_VER);
-  }
-  // create popup menu
-  hm = CreatePopupMenu();
-  if (hm) {
-    // add header
-    s = LangLoadString(IDS_FMT_PLAYERMENU);
-    if (s) {
-      AppendMenu(hm, MF_STRING | MF_DISABLED, 0, s);
-      FreeMem(s);
-      HiliteMenuItem(wnd, hm, 0, MF_BYPOSITION | MF_HILITE);
-    }
-    AppendMenu(hm, MF_SEPARATOR, 0, NULL);
-    // add items
+  dwRequired = max(HIWORD(dwRequired), FK_SA_MIN_VER);
+  hcb = GetDlgItem(wnd, IDC_PLAYERLIST);
+  // add items only if combo box is empty
+  if (!SendMessage(hcb, CB_GETCOUNT, 0, 0)) {
+    // load player list format string
     s = LangLoadString(IDS_FMT_PLAYERNAME);
     if (s) {
-      for (i = GetLatestFlashVersion(); i >= FK_SA_MIN_VER; i--) {
+      // fill in combo box list
+      for (i = FK_SA_MIN_VER; i <= GetLatestFlashVersion(); i++) {
         wsprintf(buf, s, i);
-        // also highlight minimum required player version
-        AppendMenu(hm, MF_STRING | ((i == dwRequired) ? MF_CHECKED : 0), 100 + i, buf);
+        SendMessage(hcb, CB_ADDSTRING, 0, (WPARAM) buf);
       }
       FreeMem(s);
-    }
-    // add footer
-    AppendMenu(hm, MF_SEPARATOR, 0, NULL);
-    s = LangLoadString(IDS_FMT_PLAYERSTOP);
-    if (s) {
-      AppendMenu(hm, MF_STRING, 0, s);
-      FreeMem(s);
-    }
-    // get window coords
-    GetWindowRect(wnd, &rc);
-    rc.left += (rc.right - rc.left) / 2;
-    rc.top += (rc.bottom - rc.top) / 2;
-    // show menu
-    i = (DWORD) TrackPopupMenu(hm, TPM_RETURNCMD | TPM_NONOTIFY | TPM_CENTERALIGN | TPM_VCENTERALIGN, rc.left, rc.top, 0, wnd, NULL);
-    // cleanup
-    DestroyMenu(hm);
-    // user selected something
-    if (i >= 100) {
-      i -= 100;
-      // load URL string format
-      s = LangLoadString(IDS_FMT_PLAYERLINK);
-      if (s) {
-        wsprintf(buf, s, i, i);
-        FreeMem(s);
-        // open URL link
-        URLOpenLink(wnd, buf);
-      }
     }
   }
+  // hide button
+  ShowWindow(GetDlgItem(wnd, IDC_GETPLAY), SW_HIDE);
+  // show combo box list
+  ShowWindow(hcb, SW_SHOW);
+  // highlight minimum required player version
+  SendMessage(hcb, CB_SETCURSEL, dwRequired - FK_SA_MIN_VER, 0);
+  // fix combo box height
+  AdjustComboBoxHeight(hcb, 10);
+  // set focus or ESC will close application windows instead
+  SetFocus(hcb);
+  // open combo box
+  SendMessage(hcb, CB_SHOWDROPDOWN, TRUE, 0);
 }
 
 void UpdateFlashVersion(HWND wnd) {
@@ -262,13 +236,12 @@ HWND wh;
 }
 
 BOOL CALLBACK DlgPrc(HWND wnd, UINT msg, WPARAM wparm, LPARAM lparm) {
-TCHAR *filename, *fplayer, *fsource;
+TCHAR *filename, *fplayer, *fsource, *s;
 DWORD i, j, f1, f2;
 BOOL result;
 FLASHINFO fi;
 // v1.1
 DRAWITEMSTRUCT *dis;
-TCHAR *s;
   result = FALSE;
   switch (msg) {
     case WM_INITDIALOG:
@@ -297,10 +270,41 @@ TCHAR *s;
         // note that lparam (handle of control) must be null - used as flag
         PostMessage(wnd, WM_COMMAND, MAKELONG(IDC_FLOPEN, BN_CLICKED), 0);
       }
+      // v1.7
+      // hide combo box with players list
+      ShowWindow(GetDlgItem(wnd, IDC_PLAYERLIST), SW_HIDE);
       // must be true
       result = TRUE;
       break;
     case WM_COMMAND:
+      // v1.7
+      if (LOWORD(wparm) == IDC_PLAYERLIST) {
+        result = TRUE;
+        switch (HIWORD(wparm)) {
+          case CBN_SELENDOK:
+            i = SendDlgItemMessage(wnd, IDC_PLAYERLIST, CB_GETCURSEL, 0, 0);
+            i += FK_SA_MIN_VER;
+            // load URL string format
+            s = LangLoadString(IDS_FMT_PLAYERLINK);
+            if (s) {
+              // warning: inplace replace - not safe
+              // will work only for version 0..999 ("%lu"->"###")
+              wsprintf(s, s, i, i);
+              // open URL link
+              URLOpenLink(wnd, s);
+              FreeMem(s);
+            }
+            break;
+          case CBN_CLOSEUP:
+            // hide com bobox
+            ShowWindow(GetDlgItem(wnd, IDC_PLAYERLIST), SW_HIDE);
+            // show button
+            ShowWindow(GetDlgItem(wnd, IDC_GETPLAY), SW_SHOW);
+            // return focus to the button
+            SetFocus(GetDlgItem(wnd, IDC_GETPLAY));
+            break;
+        }
+      }
       if (HIWORD(wparm) == BN_CLICKED) {
         result = TRUE;
         switch (LOWORD(wparm)) {
