@@ -291,6 +291,8 @@ BYTE *data;
 // v1.5
 // it's not very optimized code but good for small internet pages
 #define MAX_BLOCK_SIZE 1024
+static const TCHAR strConClose[] = TEXT("Connection: Close");
+static const TCHAR strHTTPVers[] = HTTP_VERSION;
 BYTE *HTTPGetContent(TCHAR *url, DWORD *len) {
 HINTERNET hOpen, hConn, hReq;
 URL_COMPONENTS uc;
@@ -321,11 +323,11 @@ DWORD sz;
       if (hConn) {
         // request
         sz = (uc.nScheme == INTERNET_SCHEME_HTTPS) ? (INTERNET_FLAG_SECURE | INTERNET_FLAG_IGNORE_CERT_CN_INVALID | INTERNET_FLAG_IGNORE_CERT_DATE_INVALID) : 0;
-        hReq = HttpOpenRequest(hConn, NULL, uc.lpszUrlPath, HTTP_VERSION, NULL, NULL, // v1.7
+        hReq = HttpOpenRequest(hConn, NULL, uc.lpszUrlPath, strHTTPVers, NULL, NULL, // v1.7
           /* INTERNET_FLAG_NO_AUTO_REDIRECT |*/ INTERNET_FLAG_NO_UI | INTERNET_FLAG_NO_COOKIES |
           INTERNET_FLAG_NO_CACHE_WRITE | sz, 0);
         if (hReq) {
-          sz = HttpSendRequest(hReq, TEXT("Connection: Close"), (DWORD) -1, NULL, 0);
+          sz = HttpSendRequest(hReq, strConClose, (DWORD) -1, NULL, 0);
           if (sz) {
             buf = GetMem(MAX_BLOCK_SIZE);
             do {

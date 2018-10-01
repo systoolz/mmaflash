@@ -1,3 +1,8 @@
+v1.8 [2018.10.01]
+- Adobe removes all older Standalone Flash Player files, only latest player available now
+- add missing const to declaration of miniz array, no .data section, less executable size
+- minor code cleanup
+
 v1.7 [2017.03.15]
 - added support for Flash 25
 - fixed invalid HTTP request for latest available Standalone Player version detection

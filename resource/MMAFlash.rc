@@ -12,9 +12,13 @@
 IDI_ICN ICON "MMAFlash.ico"
 1 24 "Manifest.xml"
 
+#define R_CAPTION "Macromedia/Adobe Flash Tool"
+#define R_VERSION "1.8"
+#define R_INTNAME "mmaflash"
+
 1 VERSIONINFO
-FILEVERSION 1,7,0,0
-PRODUCTVERSION 1,7,0,0
+FILEVERSION 1,8,0,0
+PRODUCTVERSION 1,8,0,0
 FILETYPE 1
 BEGIN
   BLOCK "StringFileInfo"
@@ -22,13 +26,13 @@ BEGIN
     BLOCK "040904E4"
     BEGIN
       VALUE "CompanyName", "SysTools"
-      VALUE "FileDescription", "Macromedia/Adobe Flash Tool"
-      VALUE "FileVersion", "1.7"
-      VALUE "LegalCopyright", "\xA9 SysTools 2014-2017"
-      VALUE "OriginalFilename", "mmaflash.exe"
-      VALUE "InternalName", "mmaflash"
-      VALUE "ProductName", "Macromedia/Adobe Flash Tool"
-      VALUE "ProductVersion", "1.7"
+      VALUE "FileDescription", R_CAPTION
+      VALUE "FileVersion", R_VERSION
+      VALUE "LegalCopyright", "\xA9 SysTools 2014-2018"
+      VALUE "OriginalFilename", R_INTNAME ".exe"
+      VALUE "InternalName", R_INTNAME
+      VALUE "ProductName", R_CAPTION
+      VALUE "ProductVersion", R_VERSION
     END
   END
   BLOCK "VarFileInfo"
@@ -39,12 +43,11 @@ END
 
 IDD_DLG DIALOG 0, 0, 234, 150
 STYLE DS_MODALFRAME | DS_CENTER | WS_POPUP | WS_CAPTION | WS_SYSMENU | WS_MINIMIZEBOX
-CAPTION "Macromedia/Adobe Flash Tool v1.7"
+CAPTION R_CAPTION " v" R_VERSION
 FONT 8, "Ms Shell Dlg"
 BEGIN
   PUSHBUTTON      "Open...", IDC_FLOPEN, 177, 7, 50, 14
   PUSHBUTTON      "Get player...", IDC_GETPLAY, 177, 27, 50, 14
-  COMBOBOX        IDC_PLAYERLIST, 177, 27, 50, 14, WS_TABSTOP | CBS_DROPDOWNLIST | CBS_HASSTRINGS | WS_VSCROLL | CBS_SORT | CBS_NOINTEGRALHEIGHT
   EDITTEXT        IDC_FSOURCE, 7, 7, 165, 15, ES_AUTOHSCROLL | ES_READONLY
   GROUPBOX        "Flash movie file", IDC_STATIC, 7, 22, 80, 45
   AUTORADIOBUTTON "Keep unchanged", IDC_FRADIO1, 12, 32, 71, 8, WS_GROUP
@@ -58,7 +61,7 @@ BEGIN
   EDITTEXT        IDC_FPLAYER, 97, 62, 70, 15, ES_AUTOHSCROLL | ES_READONLY
   PUSHBUTTON      "Save", IDC_FLSAVE, 177, 52, 50, 14
   PUSHBUTTON      "Exit", IDCANCEL, 177, 69, 50, 14
-  LTEXT           "\xA9 SysTools 2014-2017 | http://systools.losthost.org/?misc", IDC_HOMEPAGE, 22, 86, 190, 8, SS_OWNERDRAW | SS_NOTIFY
+  LTEXT           "\xA9 SysTools 2014-2018 | http://systools.losthost.org/?misc", IDC_HOMEPAGE, 22, 86, 190, 8, SS_OWNERDRAW | SS_NOTIFY
   CONTROL         "", IDC_PROGRESS, PROGRESS_CLASS, PBS_SMOOTH, 17, 86, 201, 10
   EDITTEXT        IDC_VERSION, 17, 102, 200, 40, ES_AUTOHSCROLL | ES_MULTILINE | ES_READONLY
 END
@@ -66,7 +69,7 @@ END
 STRINGTABLE
 BEGIN
   IDS_MSK_SWF "Macromedia/Adobe Flash movie (*.swf)|*.swf|"
-  IDS_MSK_EXE "Projector (*.exe)|*.exe|"
+  IDS_MSK_EXE "Flash player (*.exe)|*.exe|"
   IDS_MSK_ALL "All Files (*.*)|*.*|"
 
   IDS_VER_FLASHMOVIE "Flash movie version: %lu\r\n"
@@ -74,7 +77,6 @@ BEGIN
   IDS_VER_PLAYERFILE "Current Flash Player version: %lu.%lu\r\n"
   IDS_VER_PLAYERFROM "Add/replace Flash Player version: %lu.%lu"
 
-  IDS_FMT_PLAYERNAME "Player %lu"
   IDS_FMT_PLAYERLINK "http://download.macromedia.com/pub/flashplayer/updaters/%lu/flashplayer_%lu_sa.exe"
   IDS_FMT_VERSIONCHK "http://fpdownload.macromedia.com/pub/flashplayer/update/current/sau/currentmajor.xml"
 
@@ -82,10 +84,11 @@ BEGIN
                      "Selected Flash Player version: %lu.%lu\r\n"\
                      "Required Flash Player version: %lu.%lu\r\n\r\n"\
                      "Flash Player version must be equal or higher than required to play this Flash file.\r\n"\
-                     "An older Flash Player can't be merged with a newer Flash file.\r\n\r\n"\
-                     "Would you like to download appropriate version of the Flash Player?"
-  IDS_MSG_BADPLAYER  "This file not a Flash Player Projector."
-  IDS_MSG_BADFLASH   "This file not a Flash file or missing Flash movie overlay in Flash Player Projector."
+                     "An older Flash Player can't be connected to a newer Flash file.\r\n\r\n"\
+                     "Would you like to download latest version of the Flash Player?"
+  IDS_MSG_BADPLAYER  "This file not a Flash Player executable."
+  IDS_MSG_BADFLASH   "This file not a Flash movie or missing Flash movie overlay in Flash Player executable."
   IDS_MSG_DONE       "Operation completed successfully."
   IDS_MSG_LZMA       "LZMA compressed files not supported - you can't compress or decompress them."
+  IDS_MSG_NOVERCHECK "An error has occurred. Can't obtain latest Flash Player version."
 END

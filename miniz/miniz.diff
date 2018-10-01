@@ -1,5 +1,5 @@
---- miniz_.c	Mon Oct 14 08:02:24 2013
-+++ miniz.c	Wed Jun 10 20:08:16 2015
+--- miniz_.c	Mon Oct 14 09:02:24 2013
++++ miniz.c	Mon Oct 01 20:01:54 2018
 @@ -471,8 +471,10 @@
  typedef unsigned short mz_uint16;
  typedef unsigned int mz_uint32;
@@ -41,6 +41,15 @@
  
  #include <string.h>
  #include <assert.h>
+@@ -1931,7 +1937,7 @@
+     d->m_huff_count[2][18] = (mz_uint16)(d->m_huff_count[2][18] + 1); packed_code_sizes[num_packed_code_sizes++] = 18; packed_code_sizes[num_packed_code_sizes++] = (mz_uint8)(rle_z_count - 11); \
+ } rle_z_count = 0; } }
+ 
+-static mz_uint8 s_tdefl_packed_code_size_syms_swizzle[] = { 16, 17, 18, 0, 8, 7, 9, 6, 10, 5, 11, 4, 12, 3, 13, 2, 14, 1, 15 };
++static const mz_uint8 s_tdefl_packed_code_size_syms_swizzle[] = { 16, 17, 18, 0, 8, 7, 9, 6, 10, 5, 11, 4, 12, 3, 13, 2, 14, 1, 15 };
+ 
+ static void tdefl_start_dynamic_block(tdefl_compressor *d)
+ {
 @@ -2799,6 +2805,7 @@
  // Simple PNG writer function by Alex Evans, 2011. Released into the public domain: https://gist.github.com/908299, more context at
  // http://altdevblogaday.org/2011/04/06/a-smaller-jpg-encoder/.

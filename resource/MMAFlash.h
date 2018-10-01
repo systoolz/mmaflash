@@ -23,7 +23,6 @@
 #define IDC_VERSION    112
 #define IDC_HOMEPAGE   113
 #define IDC_PROGRESS   114
-#define IDC_PLAYERLIST 115
 
 // string
 #define IDS_MSK_SWF         1
@@ -35,13 +34,13 @@
 #define IDS_MSG_BADFLASH    6
 #define IDS_MSG_DONE        7
 #define IDS_MSG_LZMA        8
+#define IDS_MSG_NOVERCHECK  9
 
-#define IDS_VER_FLASHMOVIE  9
-#define IDS_VER_PLAYERMREQ 10
-#define IDS_VER_PLAYERFILE 11
-#define IDS_VER_PLAYERFROM 12
+#define IDS_VER_FLASHMOVIE 10
+#define IDS_VER_PLAYERMREQ 11
+#define IDS_VER_PLAYERFILE 12
+#define IDS_VER_PLAYERFROM 13
 
-#define IDS_FMT_PLAYERNAME 13
 #define IDS_FMT_PLAYERLINK 14
 #define IDS_FMT_VERSIONCHK 15
 

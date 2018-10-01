@@ -73,85 +73,43 @@ TCHAR buf[1025], *s;
 
 // v1.5
 // http://www.adobe.com/devnet/flashplayer/articles/flash_player_admin_guide.html
-static DWORD vmax = 0;
 DWORD GetLatestFlashVersion(void) {
-DWORD i, l, vcur;
+DWORD i, l, fver;
 TCHAR *s;
 BYTE *b;
   // find latest version available
-  if (!vmax) {
-    vmax = FK_SA_MAX_VER;
-    s = LangLoadString(IDS_FMT_VERSIONCHK);
-    if (s) {
-      // warning: this is ANSI text, not TEXT()
-      /*
-        <version>
-        <Player major="21" majorBeta="21"/>
-        </version>
-      */
-      b = HTTPGetContent(s, &l);
-      if (b) {
-        for (i = 0; i < l; i++) {
-          if (b[i] == '"') {
-            i++;
-            break;
-          }
+  fver = 0;
+  s = LangLoadString(IDS_FMT_VERSIONCHK);
+  if (s) {
+    // warning: this is ANSI text, not TEXT()
+    /*
+      <version>
+      <Player major="21" majorBeta="21"/>
+      </version>
+    */
+    b = HTTPGetContent(s, &l);
+    if (b) {
+      for (i = 0; i < l; i++) {
+        if (b[i] == '"') {
+          i++;
+          break;
         }
-        // just in case
-        while ((i < l) && ((b[i] == ' ') || (b[i] == '\t'))) { i++; }
-        // number found
-        if (i < l) {
-          vcur = 0;
-          while ((i < l) && (b[i] >= '0') && (b[i] <= '9')) {
-            vcur *= 10;
-            vcur += (b[i] - '0');
-            i++;
-          }
-          // set the maximum version
-          vmax = max(vcur, vmax);
+      }
+      // just in case
+      while ((i < l) && ((b[i] == ' ') || (b[i] == '\t'))) { i++; }
+      // number found
+      if (i < l) {
+        while ((i < l) && (b[i] >= '0') && (b[i] <= '9')) {
+          fver *= 10;
+          fver += (b[i] - '0');
+          i++;
         }
-        FreeMem(b);
       }
-      FreeMem(s);
+      FreeMem(b);
     }
+    FreeMem(s);
   }
-  return(vmax);
-}
-
-// v1.7
-void DownloadPlayerFile(HWND wnd, DWORD dwRequired) {
-TCHAR buf[1025], *s;
-HWND hcb;
-DWORD i;
-  // there are no Player version lower than 10
-  // available on the direct link at Adobe site
-  dwRequired = max(HIWORD(dwRequired), FK_SA_MIN_VER);
-  hcb = GetDlgItem(wnd, IDC_PLAYERLIST);
-  // add items only if combo box is empty
-  if (!SendMessage(hcb, CB_GETCOUNT, 0, 0)) {
-    // load player list format string
-    s = LangLoadString(IDS_FMT_PLAYERNAME);
-    if (s) {
-      // fill in combo box list
-      for (i = FK_SA_MIN_VER; i <= GetLatestFlashVersion(); i++) {
-        wsprintf(buf, s, i);
-        SendMessage(hcb, CB_ADDSTRING, 0, (WPARAM) buf);
-      }
-      FreeMem(s);
-    }
-  }
-  // hide button
-  ShowWindow(GetDlgItem(wnd, IDC_GETPLAY), SW_HIDE);
-  // show combo box list
-  ShowWindow(hcb, SW_SHOW);
-  // highlight minimum required player version
-  SendMessage(hcb, CB_SETCURSEL, dwRequired - FK_SA_MIN_VER, 0);
-  // fix combo box height
-  AdjustComboBoxHeight(hcb, 10);
-  // set focus or ESC will close application windows instead
-  SetFocus(hcb);
-  // open combo box
-  SendMessage(hcb, CB_SHOWDROPDOWN, TRUE, 0);
+  return(fver);
 }
 
 void UpdateFlashVersion(HWND wnd) {
@@ -270,41 +228,10 @@ DRAWITEMSTRUCT *dis;
         // note that lparam (handle of control) must be null - used as flag
         PostMessage(wnd, WM_COMMAND, MAKELONG(IDC_FLOPEN, BN_CLICKED), 0);
       }
-      // v1.7
-      // hide combo box with players list
-      ShowWindow(GetDlgItem(wnd, IDC_PLAYERLIST), SW_HIDE);
       // must be true
       result = TRUE;
       break;
     case WM_COMMAND:
-      // v1.7
-      if (LOWORD(wparm) == IDC_PLAYERLIST) {
-        result = TRUE;
-        switch (HIWORD(wparm)) {
-          case CBN_SELENDOK:
-            i = SendDlgItemMessage(wnd, IDC_PLAYERLIST, CB_GETCURSEL, 0, 0);
-            i += FK_SA_MIN_VER;
-            // load URL string format
-            s = LangLoadString(IDS_FMT_PLAYERLINK);
-            if (s) {
-              // warning: inplace replace - not safe
-              // will work only for version 0..999 ("%lu"->"###")
-              wsprintf(s, s, i, i);
-              // open URL link
-              URLOpenLink(wnd, s);
-              FreeMem(s);
-            }
-            break;
-          case CBN_CLOSEUP:
-            // hide com bobox
-            ShowWindow(GetDlgItem(wnd, IDC_PLAYERLIST), SW_HIDE);
-            // show button
-            ShowWindow(GetDlgItem(wnd, IDC_GETPLAY), SW_SHOW);
-            // return focus to the button
-            SetFocus(GetDlgItem(wnd, IDC_GETPLAY));
-            break;
-        }
-      }
       if (HIWORD(wparm) == BN_CLICKED) {
         result = TRUE;
         switch (LOWORD(wparm)) {
@@ -387,9 +314,9 @@ DRAWITEMSTRUCT *dis;
                 // ask for action
                 i = MsgBox(wnd, s, MB_ICONWARNING | MB_YESNO);
                 FreeMem(s);
-                // download appropriate player version
+                // download player
                 if (i == IDYES) {
-                  DownloadPlayerFile(wnd, fi.FileSize);
+                  PostMessage(wnd, WM_COMMAND, MAKELONG(IDC_GETPLAY, BN_CLICKED), 0);
                 }
               }
             }
@@ -487,14 +414,27 @@ DRAWITEMSTRUCT *dis;
             break;
           // v1,2
           case IDC_GETPLAY:
-            // just in case highlight required player version
-            fsource = GetWndText(GetDlgItem(wnd, IDC_FSOURCE));
-            ZeroMemory(&fi, sizeof(fi));
-            if (fsource) {
-              FK_GetFileInfo(fsource, &fi);
-              FreeMem(fsource);
+            // v1.8
+            i = GetLatestFlashVersion();
+            // latest version found
+            if (i) {
+              // load player download URL string format
+              s = LangLoadString(IDS_FMT_PLAYERLINK);
+              if (s) {
+                // warning: inplace replace - not safe
+                // will work only for version 0..999 ("%lu"->"###")
+                wsprintf(s, s, i, i);
+                // open URL link
+                URLOpenLink(wnd, s);
+                FreeMem(s);
+              } else {
+                i = 0;
+              }
             }
-            DownloadPlayerFile(wnd, fi.FileSize ? FK_GetRequiredPlayerVersion(fi.HeadSign) : 0);
+            // error
+            if (!i) {
+              MsgBox(wnd, MAKEINTRESOURCE(IDS_MSG_NOVERCHECK), MB_ICONERROR);
+            }
             break;
         }
       }
