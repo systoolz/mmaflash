@@ -13,3 +13,5 @@ http://www.softpedia.com/get/Internet/WEB-Design/Flash/Macromedia-Adobe-Flash-To
 Software homepage (you can download binary "MMAFlash.exe" here):
 
 http://systools.losthost.org/?misc#mmaflash
+
+Licensed under the Apache License, Version 2.0 (the "License") - see LICENSE file.
