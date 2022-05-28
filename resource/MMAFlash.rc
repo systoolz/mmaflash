@@ -13,12 +13,12 @@ IDI_ICN ICON "MMAFlash.ico"
 1 24 "Manifest.xml"
 
 #define R_CAPTION "Macromedia/Adobe Flash Tool"
-#define R_VERSION "1.8"
+#define R_VERSION "1.9"
 #define R_INTNAME "mmaflash"
 
 1 VERSIONINFO
-FILEVERSION 1,8,0,0
-PRODUCTVERSION 1,8,0,0
+FILEVERSION 1,9,0,0
+PRODUCTVERSION 1,9,0,0
 FILETYPE 1
 BEGIN
   BLOCK "StringFileInfo"
@@ -28,7 +28,7 @@ BEGIN
       VALUE "CompanyName", "SysTools"
       VALUE "FileDescription", R_CAPTION
       VALUE "FileVersion", R_VERSION
-      VALUE "LegalCopyright", "\xA9 SysTools 2014-2018"
+      VALUE "LegalCopyright", "\xA9 SysTools 2014-2022"
       VALUE "OriginalFilename", R_INTNAME ".exe"
       VALUE "InternalName", R_INTNAME
       VALUE "ProductName", R_CAPTION
@@ -61,7 +61,7 @@ BEGIN
   EDITTEXT        IDC_FPLAYER, 97, 62, 70, 15, ES_AUTOHSCROLL | ES_READONLY
   PUSHBUTTON      "Save", IDC_FLSAVE, 177, 52, 50, 14
   PUSHBUTTON      "Exit", IDCANCEL, 177, 69, 50, 14
-  LTEXT           "\xA9 SysTools 2014-2018 | http://systools.losthost.org/?misc", IDC_HOMEPAGE, 22, 86, 190, 8, SS_OWNERDRAW | SS_NOTIFY
+  LTEXT           "\xA9 SysTools 2014-2022 | http://systools.losthost.org/?misc", IDC_HOMEPAGE, 22, 86, 190, 8, SS_OWNERDRAW | SS_NOTIFY
   CONTROL         "", IDC_PROGRESS, PROGRESS_CLASS, PBS_SMOOTH, 17, 86, 201, 10
   EDITTEXT        IDC_VERSION, 17, 102, 200, 40, ES_AUTOHSCROLL | ES_MULTILINE | ES_READONLY
 END
@@ -72,23 +72,23 @@ BEGIN
   IDS_MSK_EXE "Flash player (*.exe)|*.exe|"
   IDS_MSK_ALL "All Files (*.*)|*.*|"
 
-  IDS_VER_FLASHMOVIE "Flash movie version: %lu\r\n"
+  IDS_VER_FLASHMOVIE "Flash movie version: %lu   %c%c%c\r\n"
   IDS_VER_PLAYERMREQ "Required minimum Flash Player version: %lu.%lu\r\n"
   IDS_VER_PLAYERFILE "Current Flash Player version: %lu.%lu\r\n"
   IDS_VER_PLAYERFROM "Add/replace Flash Player version: %lu.%lu"
 
-  IDS_FMT_PLAYERLINK "http://download.macromedia.com/pub/flashplayer/updaters/%lu/flashplayer_%lu_sa.exe"
-  IDS_FMT_VERSIONCHK "http://fpdownload.macromedia.com/pub/flashplayer/update/current/sau/currentmajor.xml"
+  IDS_PLAYER_UPDATER "https://fpdownload.macromedia.com/pub/flashplayer/updaters/32/flashplayer_32_sa.exe"
+  IDS_PLAYER_ARCHIVE "https://web.archive.org/web/20201210020756/https://fpdownload.macromedia.com/pub/flashplayer/updaters/32/flashplayer_32_sa.exe"
 
   IDS_MSG_BADVERSION "Current Flash file version: %lu\r\n"\
                      "Selected Flash Player version: %lu.%lu\r\n"\
                      "Required Flash Player version: %lu.%lu\r\n\r\n"\
                      "Flash Player version must be equal or higher than required to play this Flash file.\r\n"\
-                     "An older Flash Player can't be connected to a newer Flash file.\r\n\r\n"\
+                     "An older Flash Player can't be used with a newer Flash file.\r\n\r\n"\
                      "Would you like to download latest version of the Flash Player?"
   IDS_MSG_BADPLAYER  "This file not a Flash Player executable."
   IDS_MSG_BADFLASH   "This file not a Flash movie or missing Flash movie overlay in Flash Player executable."
   IDS_MSG_DONE       "Operation completed successfully."
   IDS_MSG_LZMA       "LZMA compressed files not supported - you can't compress or decompress them."
-  IDS_MSG_NOVERCHECK "An error has occurred. Can't obtain latest Flash Player version."
+  IDS_MSG_LOCATION   "Download player from official site (Yes) or from Web Archive mirror (No)?"
 END

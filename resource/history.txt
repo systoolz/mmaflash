@@ -1,3 +1,8 @@
+v1.9 [2022.05.28]
+- new method for Standalone Flash Player download (provided links for official and archived versions)
+- add Flash file type FWS / CWS / ZWS (last two compressed) after version in information block
+- some dialog text rephrase
+
 v1.8 [2018.10.01]
 - Adobe removes all older Standalone Flash Player files, only latest player available now
 - add missing const to declaration of miniz array, no .data section, less executable size
