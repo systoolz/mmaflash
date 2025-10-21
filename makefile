@@ -1,23 +1,28 @@
-# MMAFlash GCC makefile
-CC=gcc
-LD=ld
-EXEC_FILE=MMAFlash.exe
-LIB_PATH?=.
-CFLAGS= -mno-stack-arg-probe -Os -Wall -pedantic -mwindows -I.
-LDFLAGS= --strip-all --subsystem windows -L $(LIB_PATH) -l kernel32 -l user32 -l ole32 -l comctl32 -l comdlg32 -l shell32 -l gdi32 -nostdlib --exclude-libs msvcrt.a -e_WinMain@16
+# GCC mingw32-make makefile
+CC=@gcc
+RC=@windres
+RM=@rm -rf
 
-OBJ_EXT=.o
-OBJS=SysToolX${OBJ_EXT} FlashKit${OBJ_EXT} MMAFlash${OBJ_EXT}
+# to fix "undefined reference to `_alloca'" add "-mno-stack-arg-probe"
+# http://cygwin.cygwin.narkive.com/XE6kJpcC/strange-behaviour-of-gcc
+CFLAGS= -mno-stack-arg-probe -fno-exceptions -fno-rtti -Os -Wall -pedantic -I.
+LDFLAGS= -s -nostdlib -mwindows -e_WinMain@16
+LDLIBS= -l kernel32 -l user32 -l ole32 -l comctl32 -l comdlg32 -l shell32 -l gdi32
 
-all: $(EXEC_FILE)
+EXE=MMAFlash
+RES=${EXE}.res
+EXT=.o
+OBJ=SysToolX${EXT} FlashKit${EXT} MMAFlash${EXT}
 
-$(EXEC_FILE): $(OBJS)
-	${LD} ${OBJS} resource/MMAFlash.res -o $@ ${LDFLAGS}
+$(EXE):	$(OBJ) $(RES)
 
-
-o=${OBJ_EXT}
+$(RES):	resource/${EXE}.rc resource/${EXE}.h
+	${RC} --include-dir=resource -i resource/${EXE}.rc -O coff -o $@
 
 wipe:
-	@rm -rf *${OBJ_EXT}
+	${RM} *${EXT}
+	${RM} ${RES}
+
+all:	$(EXE)
 
 clean:	wipe all
